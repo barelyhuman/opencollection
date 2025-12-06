@@ -94,7 +94,7 @@ export interface OAuth2ClientCredentialsFlow {
  */
 export interface OAuth2ResourceOwnerPasswordFlow {
   type: 'oauth2';
-  flow: 'resource_owner_password';
+  flow: 'resource_owner_password_credentials';
   accessTokenUrl?: string;
   refreshTokenUrl?: string;
   credentials?: OAuth2ClientCredentials;

@@ -26,6 +26,12 @@ export interface Variable {
   value?: VariableValueOrVariants;
   description?: Description;
   disabled?: boolean;
-  transient?: boolean;
-  default?: VariableValue;
+}
+
+export interface SecretVariable {
+  secret: true;
+  name?: string;
+  description?: Description;
+  disabled?: boolean;
+  type?: VariableValueType;
 }

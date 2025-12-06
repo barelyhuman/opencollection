@@ -11,20 +11,24 @@ import type { GrpcRequest } from '../requests/grpc';
 import type { HttpRequest } from '../requests/http';
 import type { WebSocketRequest } from '../requests/websocket';
 
-export interface Folder {
-  type: 'folder';
+export interface FolderInfo {
   name?: string;
   description?: Description;
+  type?: 'folder';
   seq?: number;
-  items?: Item[];
-  request?: RequestDefaults;
-  docs?: Documentation;
   tags?: Tag[];
 }
 
-export interface Script {
+export interface Folder {
+  info?: FolderInfo;
+  items?: Item[];
+  request?: RequestDefaults;
+  docs?: Documentation;
+}
+
+export interface ScriptFile {
   type: 'script';
   script?: string;
 }
 
-export type Item = HttpRequest | GraphQLRequest | GrpcRequest | WebSocketRequest | Folder | Script;
+export type Item = HttpRequest | GraphQLRequest | GrpcRequest | WebSocketRequest | Folder | ScriptFile;

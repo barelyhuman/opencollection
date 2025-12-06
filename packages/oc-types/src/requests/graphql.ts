@@ -8,7 +8,7 @@ import type { Assertion } from '../common/assertions';
 import type { Scripts } from '../common/scripts';
 import type { Variable } from '../common/variables';
 import type { Tag } from '../common/tags';
-import type { HttpHeader, HttpRequestParam } from './http';
+import type { HttpRequestHeader, HttpRequestParam } from './http';
 
 export interface GraphQLBody {
   query?: string;
@@ -28,21 +28,33 @@ export interface GraphQLRequestSettings {
   maxRedirects?: number | 'inherit';
 }
 
-export interface GraphQLRequest {
-  type: 'graphql';
+export interface GraphQLRequestInfo {
   name?: string;
   description?: Description;
+  type?: 'graphql';
   seq?: number;
-  url?: string;
-  method?: string;
-  params?: HttpRequestParam[];
-  headers?: HttpHeader[];
-  body?: GraphQLBody | GraphQLBodyVariant[];
-  auth?: Auth;
-  scripts?: Scripts;
-  variables?: Variable[];
-  assertions?: Assertion[];
-  docs?: string;
-  settings?: GraphQLRequestSettings;
   tags?: Tag[];
+}
+
+export interface GraphQLRequestDetails {
+  method?: string;
+  url?: string;
+  headers?: HttpRequestHeader[];
+  params?: HttpRequestParam[];
+  body?: GraphQLBody | GraphQLBodyVariant[];
+}
+
+export interface GraphQLRequestRuntime {
+  variables?: Variable[];
+  scripts?: Scripts;
+  assertions?: Assertion[];
+  auth?: Auth;
+}
+
+export interface GraphQLRequest {
+  info?: GraphQLRequestInfo;
+  graphql?: GraphQLRequestDetails;
+  runtime?: GraphQLRequestRuntime;
+  settings?: GraphQLRequestSettings;
+  docs?: string;
 }

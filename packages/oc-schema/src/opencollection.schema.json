@@ -92,7 +92,7 @@
           "type": "array",
           "description": "Array of http headers, sent with http, graphql, websocket requests",
           "items": {
-            "$ref": "#/$defs/HttpHeader"
+            "$ref": "#/$defs/HttpRequestHeader"
           }
         },
         "metadata": {
@@ -391,7 +391,7 @@
         }
       ]
     },
-    "HttpHeader": {
+    "HttpRequestHeader": {
       "type": "object",
       "description": "Http header with name, value, description, and disabled state",
       "properties": {
@@ -409,6 +409,22 @@
         "disabled": {
           "type": "boolean",
           "description": "Whether the header is disabled"
+        }
+      },
+      "required": ["name", "value"],
+      "additionalProperties": false
+    },
+    "HttpResponseHeader": {
+      "type": "object",
+      "description": "Http response header with name and value",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The header name"
+        },
+        "value": {
+          "type": "string",
+          "description": "The header value"
         }
       },
       "required": ["name", "value"],
@@ -601,7 +617,7 @@
               "type": "array",
               "description": "Array of request headers",
               "items": {
-                "$ref": "#/$defs/HttpHeader"
+                "$ref": "#/$defs/HttpRequestHeader"
               }
             },
             "params": {
@@ -633,7 +649,7 @@
               "type": "array",
               "description": "Array of response headers",
               "items": {
-                "$ref": "#/$defs/HttpHeader"
+                "$ref": "#/$defs/HttpResponseHeader"
               }
             },
             "body": {
@@ -782,27 +798,31 @@
           "type": "array",
           "description": "Files as array of file objects",
           "items": {
-            "type": "object",
-            "properties": {
-              "filePath": {
-                "type": "string",
-                "description": "Path to the file"
-              },
-              "contentType": {
-                "type": "string",
-                "description": "MIME type of the file"
-              },
-              "selected": {
-                "type": "boolean",
-                "description": "Whether the file is selected"
-              }
-            },
-            "required": ["filePath", "contentType", "selected"],
-            "additionalProperties": false
+            "$ref": "#/$defs/FileBodyVariant"
           }
         }
       },
       "required": ["type", "data"],
+      "additionalProperties": false
+    },
+    "FileBodyVariant": {
+      "type": "object",
+      "description": "A file variant with path, content type, and selection state",
+      "properties": {
+        "filePath": {
+          "type": "string",
+          "description": "Path to the file"
+        },
+        "contentType": {
+          "type": "string",
+          "description": "MIME type of the file"
+        },
+        "selected": {
+          "type": "boolean",
+          "description": "Whether the file is selected"
+        }
+      },
+      "required": ["filePath", "contentType", "selected"],
       "additionalProperties": false
     },
     "GraphQLBody": {
@@ -1116,7 +1136,7 @@
         },
         "flow": {
           "type": "string",
-          "const": "resource_owner_password"
+          "const": "resource_owner_password_credentials"
         },
         "accessTokenUrl": {
           "type": "string",
@@ -1480,7 +1500,7 @@
           "$ref": "#/$defs/Folder"
         },
         {
-          "$ref": "#/$defs/Script"
+          "$ref": "#/$defs/ScriptFile"
         }
       ]
     },
@@ -1631,9 +1651,9 @@
       },
       "additionalProperties": false
     },
-    "HttpRequest": {
+    "HttpRequestInfo": {
       "type": "object",
-      "description": "HTTP request configuration",
+      "description": "HTTP request metadata and documentation",
       "properties": {
         "name": {
           "type": "string",
@@ -1642,34 +1662,48 @@
         "description": {
           "$ref": "#/$defs/Description"
         },
-        "seq": {
-          "$ref": "#/$defs/Sequence"
-        },
         "type": {
           "type": "string",
           "const": "http",
           "description": "The type of request"
         },
+        "seq": {
+          "$ref": "#/$defs/Sequence"
+        },
+        "tags": {
+          "type": "array",
+          "description": "Array of tags",
+          "items": {
+            "$ref": "#/$defs/Tag"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "HttpRequestDetails": {
+      "type": "object",
+      "description": "HTTP request protocol details",
+      "properties": {
+        "method": {
+          "type": "string",
+          "description": "HTTP method"
+        },
         "url": {
           "type": "string",
           "description": "The URL of the request"
         },
-        "method": {
-          "type": "string",
-          "description": "HTTP method"
+        "headers": {
+          "type": "array",
+          "description": "Array of request headers",
+          "items": {
+            "$ref": "#/$defs/HttpRequestHeader"
+          }
         },
         "params": {
           "type": "array",
           "description": "Array of request parameters",
           "items": {
             "$ref": "#/$defs/HttpRequestParam"
-          }
-        },
-        "headers": {
-          "type": "array",
-          "description": "Array of request headers",
-          "items": {
-            "$ref": "#/$defs/HttpHeader"
           }
         },
         "body": {
@@ -1684,19 +1718,23 @@
               }
             }
           ]
-        },
-        "auth": {
-          "$ref": "#/$defs/Auth"
-        },
-        "scripts": {
-          "$ref": "#/$defs/Scripts"
-        },
+        }
+      },
+      "additionalProperties": false
+    },
+    "HttpRequestRuntime": {
+      "type": "object",
+      "description": "HTTP request runtime configuration",
+      "properties": {
         "variables": {
           "type": "array",
           "description": "Array of variables",
           "items": {
             "$ref": "#/$defs/Variable"
           }
+        },
+        "scripts": {
+          "$ref": "#/$defs/Scripts"
         },
         "assertions": {
           "type": "array",
@@ -1705,19 +1743,27 @@
             "$ref": "#/$defs/Assertion"
           }
         },
-        "docs": {
-          "type": "string",
-          "description": "Documentation for this request"
+        "auth": {
+          "$ref": "#/$defs/Auth"
+        }
+      },
+      "additionalProperties": false
+    },
+    "HttpRequest": {
+      "type": "object",
+      "description": "HTTP request configuration",
+      "properties": {
+        "info": {
+          "$ref": "#/$defs/HttpRequestInfo"
+        },
+        "http": {
+          "$ref": "#/$defs/HttpRequestDetails"
+        },
+        "runtime": {
+          "$ref": "#/$defs/HttpRequestRuntime"
         },
         "settings": {
           "$ref": "#/$defs/HttpRequestSettings"
-        },
-        "tags": {
-          "type": "array",
-          "description": "Array of tags",
-          "items": {
-            "$ref": "#/$defs/Tag"
-          }
         },
         "examples": {
           "type": "array",
@@ -1725,14 +1771,17 @@
           "items": {
             "$ref": "#/$defs/HttpRequestExample"
           }
+        },
+        "docs": {
+          "type": "string",
+          "description": "Documentation for this request"
         }
       },
-      "required": ["type"],
       "additionalProperties": false
     },
-    "GraphQLRequest": {
+    "GraphQLRequestInfo": {
       "type": "object",
-      "description": "GraphQL request configuration",
+      "description": "GraphQL request metadata and documentation",
       "properties": {
         "name": {
           "type": "string",
@@ -1741,34 +1790,48 @@
         "description": {
           "$ref": "#/$defs/Description"
         },
-        "seq": {
-          "$ref": "#/$defs/Sequence"
-        },
         "type": {
           "type": "string",
           "const": "graphql",
           "description": "The type of request"
         },
+        "seq": {
+          "$ref": "#/$defs/Sequence"
+        },
+        "tags": {
+          "type": "array",
+          "description": "Array of tags",
+          "items": {
+            "$ref": "#/$defs/Tag"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "GraphQLRequestDetails": {
+      "type": "object",
+      "description": "GraphQL request protocol details",
+      "properties": {
+        "method": {
+          "type": "string",
+          "description": "HTTP method"
+        },
         "url": {
           "type": "string",
           "description": "The URL of the request"
         },
-        "method": {
-          "type": "string",
-          "description": "HTTP method"
+        "headers": {
+          "type": "array",
+          "description": "Array of request headers",
+          "items": {
+            "$ref": "#/$defs/HttpRequestHeader"
+          }
         },
         "params": {
           "type": "array",
           "description": "Array of request parameters",
           "items": {
             "$ref": "#/$defs/HttpRequestParam"
-          }
-        },
-        "headers": {
-          "type": "array",
-          "description": "Array of request headers",
-          "items": {
-            "$ref": "#/$defs/HttpHeader"
           }
         },
         "body": {
@@ -1783,19 +1846,23 @@
               }
             }
           ]
-        },
-        "auth": {
-          "$ref": "#/$defs/Auth"
-        },
-        "scripts": {
-          "$ref": "#/$defs/Scripts"
-        },
+        }
+      },
+      "additionalProperties": false
+    },
+    "GraphQLRequestRuntime": {
+      "type": "object",
+      "description": "GraphQL request runtime configuration",
+      "properties": {
         "variables": {
           "type": "array",
           "description": "Array of variables",
           "items": {
             "$ref": "#/$defs/Variable"
           }
+        },
+        "scripts": {
+          "$ref": "#/$defs/Scripts"
         },
         "assertions": {
           "type": "array",
@@ -1804,12 +1871,53 @@
             "$ref": "#/$defs/Assertion"
           }
         },
-        "docs": {
-          "type": "string",
-          "description": "Documentation for this request"
+        "auth": {
+          "$ref": "#/$defs/Auth"
+        }
+      },
+      "additionalProperties": false
+    },
+    "GraphQLRequest": {
+      "type": "object",
+      "description": "GraphQL request configuration",
+      "properties": {
+        "info": {
+          "$ref": "#/$defs/GraphQLRequestInfo"
+        },
+        "graphql": {
+          "$ref": "#/$defs/GraphQLRequestDetails"
+        },
+        "runtime": {
+          "$ref": "#/$defs/GraphQLRequestRuntime"
         },
         "settings": {
           "$ref": "#/$defs/GraphQLRequestSettings"
+        },
+        "docs": {
+          "type": "string",
+          "description": "Documentation for this request"
+        }
+      },
+      "additionalProperties": false
+    },
+    "GrpcRequestInfo": {
+      "type": "object",
+      "description": "gRPC request metadata and documentation",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the request"
+        },
+        "description": {
+          "$ref": "#/$defs/Description"
+        },
+        "type": {
+          "type": "string",
+          "const": "grpc",
+          "description": "The type of request"
+        },
+        "seq": {
+          "$ref": "#/$defs/Sequence"
         },
         "tags": {
           "type": "array",
@@ -1819,28 +1927,12 @@
           }
         }
       },
-      "required": ["type"],
       "additionalProperties": false
     },
-    "GrpcRequest": {
+    "GrpcRequestDetails": {
       "type": "object",
-      "description": "gRPC request configuration",
+      "description": "gRPC request protocol details",
       "properties": {
-        "name": {
-          "type": "string",
-          "description": "The name of the request"
-        },
-        "description": {
-          "$ref": "#/$defs/Description"
-        },
-        "seq": {
-          "$ref": "#/$defs/Sequence"
-        },
-        "type": {
-          "type": "string",
-          "const": "grpc",
-          "description": "The type of request"
-        },
         "url": {
           "type": "string",
           "description": "The gRPC service URL or endpoint"
@@ -1877,19 +1969,23 @@
               }
             }
           ]
-        },
-        "auth": {
-          "$ref": "#/$defs/Auth"
-        },
-        "scripts": {
-          "$ref": "#/$defs/Scripts"
-        },
+        }
+      },
+      "additionalProperties": false
+    },
+    "GrpcRequestRuntime": {
+      "type": "object",
+      "description": "gRPC request runtime configuration",
+      "properties": {
         "variables": {
           "type": "array",
           "description": "Array of variables",
           "items": {
             "$ref": "#/$defs/Variable"
           }
+        },
+        "scripts": {
+          "$ref": "#/$defs/Scripts"
         },
         "assertions": {
           "type": "array",
@@ -1898,9 +1994,50 @@
             "$ref": "#/$defs/Assertion"
           }
         },
+        "auth": {
+          "$ref": "#/$defs/Auth"
+        }
+      },
+      "additionalProperties": false
+    },
+    "GrpcRequest": {
+      "type": "object",
+      "description": "gRPC request configuration",
+      "properties": {
+        "info": {
+          "$ref": "#/$defs/GrpcRequestInfo"
+        },
+        "grpc": {
+          "$ref": "#/$defs/GrpcRequestDetails"
+        },
+        "runtime": {
+          "$ref": "#/$defs/GrpcRequestRuntime"
+        },
         "docs": {
           "type": "string",
           "description": "Documentation for this request"
+        }
+      },
+      "additionalProperties": false
+    },
+    "WebSocketRequestInfo": {
+      "type": "object",
+      "description": "WebSocket request metadata and documentation",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the request"
+        },
+        "description": {
+          "$ref": "#/$defs/Description"
+        },
+        "type": {
+          "type": "string",
+          "const": "websocket",
+          "description": "The type of request"
+        },
+        "seq": {
+          "$ref": "#/$defs/Sequence"
         },
         "tags": {
           "type": "array",
@@ -1910,28 +2047,12 @@
           }
         }
       },
-      "required": ["type"],
       "additionalProperties": false
     },
-    "WebSocketRequest": {
+    "WebSocketRequestDetails": {
       "type": "object",
-      "description": "WebSocket request configuration",
+      "description": "WebSocket request protocol details",
       "properties": {
-        "name": {
-          "type": "string",
-          "description": "The name of the request"
-        },
-        "description": {
-          "$ref": "#/$defs/Description"
-        },
-        "seq": {
-          "$ref": "#/$defs/Sequence"
-        },
-        "type": {
-          "type": "string",
-          "const": "websocket",
-          "description": "The type of request"
-        },
         "url": {
           "type": "string",
           "description": "The WebSocket URL"
@@ -1940,7 +2061,7 @@
           "type": "array",
           "description": "Array of request headers",
           "items": {
-            "$ref": "#/$defs/HttpHeader"
+            "$ref": "#/$defs/HttpRequestHeader"
           }
         },
         "message": {
@@ -1955,13 +2076,14 @@
               }
             }
           ]
-        },
-        "auth": {
-          "$ref": "#/$defs/Auth"
-        },
-        "scripts": {
-          "$ref": "#/$defs/Scripts"
-        },
+        }
+      },
+      "additionalProperties": false
+    },
+    "WebSocketRequestRuntime": {
+      "type": "object",
+      "description": "WebSocket request runtime configuration",
+      "properties": {
         "variables": {
           "type": "array",
           "description": "Array of variables",
@@ -1969,9 +2091,52 @@
             "$ref": "#/$defs/Variable"
           }
         },
+        "scripts": {
+          "$ref": "#/$defs/Scripts"
+        },
+        "auth": {
+          "$ref": "#/$defs/Auth"
+        }
+      },
+      "additionalProperties": false
+    },
+    "WebSocketRequest": {
+      "type": "object",
+      "description": "WebSocket request configuration",
+      "properties": {
+        "info": {
+          "$ref": "#/$defs/WebSocketRequestInfo"
+        },
+        "websocket": {
+          "$ref": "#/$defs/WebSocketRequestDetails"
+        },
+        "runtime": {
+          "$ref": "#/$defs/WebSocketRequestRuntime"
+        },
         "docs": {
           "type": "string",
           "description": "Documentation for this request"
+        }
+      },
+      "additionalProperties": false
+    },
+    "FolderInfo": {
+      "type": "object",
+      "description": "Folder metadata and documentation",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the folder"
+        },
+        "description": {
+          "$ref": "#/$defs/Description"
+        },
+        "type": {
+          "type": "string",
+          "const": "folder"
+        },
+        "seq": {
+          "$ref": "#/$defs/Sequence"
         },
         "tags": {
           "type": "array",
@@ -1981,26 +2146,14 @@
           }
         }
       },
-      "required": ["type"],
       "additionalProperties": false
     },
     "Folder": {
       "type": "object",
       "description": "A folder for organizing collection items",
       "properties": {
-        "type": {
-          "type": "string",
-          "const": "folder"
-        },
-        "name": {
-          "type": "string",
-          "description": "The name of the folder"
-        },
-        "description": {
-          "$ref": "#/$defs/Description"
-        },
-        "seq": {
-          "$ref": "#/$defs/Sequence"
+        "info": {
+          "$ref": "#/$defs/FolderInfo"
         },
         "items": {
           "type": "array",
@@ -2014,20 +2167,13 @@
         },
         "docs": {
           "$ref": "#/$defs/Documentation"
-        },
-        "tags": {
-          "type": "array",
-          "description": "Array of tags",
-          "items": {
-            "$ref": "#/$defs/Tag"
-          }
         }
       },
       "additionalProperties": false
     },
-    "Script": {
+    "ScriptFile": {
       "type": "object",
-      "description": "Javscript module or shared collection scripts",
+      "description": "Javascript module or shared collection scripts",
       "properties": {
         "type": {
           "type": "string",
@@ -2038,6 +2184,23 @@
           "description": "The script"
         }
       },
+      "additionalProperties": false
+    },
+    "Script": {
+      "type": "object",
+      "description": "A script to execute at a specific lifecycle stage",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["before-request", "after-response", "tests", "hooks"],
+          "description": "The lifecycle stage when this script executes"
+        },
+        "code": {
+          "type": "string",
+          "description": "The script code"
+        }
+      },
+      "required": ["type", "code"],
       "additionalProperties": false
     },
     "Environment": {
@@ -2059,7 +2222,14 @@
           "type": "array",
           "description": "Array of environment variables",
           "items": {
-            "$ref": "#/$defs/Variable"
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Variable"
+              },
+              {
+                "$ref": "#/$defs/SecretVariable"
+              }
+            ]
           }
         },
         "clientCertificates": {
@@ -2108,16 +2278,37 @@
         "disabled": {
           "type": "boolean",
           "description": "Whether the variable is disabled"
-        },
-        "transient": {
-          "type": "boolean",
-          "description": "Whether the variable value should be persisted or not"
-        },
-        "default": {
-          "description": "The default value when transient is true",
-          "$ref": "#/$defs/VariableValue"
         }
       },
+      "additionalProperties": false
+    },
+    "SecretVariable": {
+      "type": "object",
+      "description": "A secret variable with name, type, description, and state flags",
+      "properties": {
+        "secret": {
+          "type": "boolean",
+          "const": true,
+          "description": "Indicates this is a secret variable"
+        },
+        "name": {
+          "type": "string",
+          "description": "The variable name"
+        },
+        "description": {
+          "$ref": "#/$defs/Description"
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Whether the variable is disabled"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["string", "number", "boolean", "null", "object"],
+          "description": "The data type of the secret variable"
+        }
+      },
+      "required": ["secret"],
       "additionalProperties": false
     },
     "VariableValue": {
@@ -2164,27 +2355,11 @@
       "additionalProperties": false
     },
     "Scripts": {
-      "type": "object",
+      "type": "array",
       "description": "Scripts for collection execution lifecycle",
-      "properties": {
-        "preRequest": {
-          "type": "string",
-          "description": "Script to execute before making requests"
-        },
-        "postResponse": {
-          "type": "string",
-          "description": "Script to execute after receiving responses"
-        },
-        "tests": {
-          "type": "string",
-          "description": "Test scripts to validate responses"
-        },
-        "hooks": {
-          "type": "string",
-          "description": "Scripts that can be injected into specific stages of the execution process."
-        }
-      },
-      "additionalProperties": false
+      "items": {
+        "$ref": "#/$defs/Script"
+      }
     }
   }
 }

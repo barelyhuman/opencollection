@@ -5,7 +5,7 @@
 import type { Auth } from './auth';
 import type { Scripts } from './scripts';
 import type { Variable } from './variables';
-import type { HttpHeader, HttpRequestSettings } from '../requests/http';
+import type { HttpRequestHeader, HttpRequestSettings } from '../requests/http';
 import type { GraphQLRequestSettings } from '../requests/graphql';
 import type { GrpcMetadata } from '../requests/grpc';
 
@@ -15,7 +15,7 @@ export interface RequestSettings {
 }
 
 export interface RequestDefaults {
-  headers?: HttpHeader[];
+  headers?: HttpRequestHeader[];
   metadata?: GrpcMetadata[];
   auth?: Auth;
   variables?: Variable[];

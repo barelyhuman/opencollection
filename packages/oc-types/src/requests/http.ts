@@ -9,11 +9,16 @@ import type { Scripts } from '../common/scripts';
 import type { Variable } from '../common/variables';
 import type { Tag } from '../common/tags';
 
-export interface HttpHeader {
+export interface HttpRequestHeader {
   name: string;
   value: string;
   description?: Description;
   disabled?: boolean;
+}
+
+export interface HttpResponseHeader {
+  name: string;
+  value: string;
 }
 
 export interface HttpRequestParam {
@@ -54,15 +59,18 @@ export interface MultipartFormBody {
   data: MultipartFormEntry[];
 }
 
-export interface FileBodyEntry {
+export interface FileBodyVariant {
   filePath: string;
   contentType: string;
   selected: boolean;
 }
 
+/** @deprecated Use FileBodyVariant instead */
+export type FileBodyEntry = FileBodyVariant;
+
 export interface FileBody {
   type: 'file';
-  data: FileBodyEntry[];
+  data: FileBodyVariant[];
 }
 
 export type HttpRequestBody = RawBody | FormUrlEncodedBody | MultipartFormBody | FileBody;
@@ -83,7 +91,7 @@ export interface HttpRequestSettings {
 export interface HttpRequestExampleRequest {
   url?: string;
   method?: string;
-  headers?: HttpHeader[];
+  headers?: HttpRequestHeader[];
   params?: HttpRequestParam[];
   body?: HttpRequestBody;
 }
@@ -96,7 +104,7 @@ export interface HttpRequestExampleResponseBody {
 export interface HttpRequestExampleResponse {
   status?: number;
   statusText?: string;
-  headers?: HttpHeader[];
+  headers?: HttpResponseHeader[];
   body?: HttpRequestExampleResponseBody;
 }
 
@@ -107,24 +115,36 @@ export interface HttpRequestExample {
   response?: HttpRequestExampleResponse;
 }
 
-export interface HttpRequest {
-  type: 'http';
+export interface HttpRequestInfo {
   name?: string;
   description?: Description;
+  type?: 'http';
   seq?: number;
-  url?: string;
-  method?: string;
-  params?: HttpRequestParam[];
-  headers?: HttpHeader[];
-  body?: HttpRequestBody | HttpRequestBodyVariant[];
-  auth?: Auth;
-  scripts?: Scripts;
-  variables?: Variable[];
-  assertions?: Assertion[];
-  docs?: string;
-  settings?: HttpRequestSettings;
   tags?: Tag[];
+}
+
+export interface HttpRequestDetails {
+  method?: string;
+  url?: string;
+  headers?: HttpRequestHeader[];
+  params?: HttpRequestParam[];
+  body?: HttpRequestBody | HttpRequestBodyVariant[];
+}
+
+export interface HttpRequestRuntime {
+  variables?: Variable[];
+  scripts?: Scripts;
+  assertions?: Assertion[];
+  auth?: Auth;
+}
+
+export interface HttpRequest {
+  info?: HttpRequestInfo;
+  http?: HttpRequestDetails;
+  runtime?: HttpRequestRuntime;
+  settings?: HttpRequestSettings;
   examples?: HttpRequestExample[];
+  docs?: string;
 }
 
 export type { Auth, AuthApiKey, AuthAwsV4, AuthBasic, AuthBearer, AuthDigest, AuthNTLM, AuthWsse } from '../common/auth';

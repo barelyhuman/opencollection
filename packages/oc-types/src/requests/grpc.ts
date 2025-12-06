@@ -37,21 +37,33 @@ export type GrpcMethodType =
   | 'server-streaming'
   | 'bidi-streaming';
 
-export interface GrpcRequest {
-  type: 'grpc';
+export interface GrpcRequestInfo {
   name?: string;
   description?: Description;
+  type?: 'grpc';
   seq?: number;
+  tags?: Tag[];
+}
+
+export interface GrpcRequestDetails {
   url?: string;
   method?: string;
   methodType?: GrpcMethodType;
   protoFilePath?: string;
   metadata?: GrpcMetadata[];
   message?: GrpcMessagePayload;
-  auth?: Auth;
-  scripts?: Scripts;
+}
+
+export interface GrpcRequestRuntime {
   variables?: Variable[];
+  scripts?: Scripts;
   assertions?: Assertion[];
+  auth?: Auth;
+}
+
+export interface GrpcRequest {
+  info?: GrpcRequestInfo;
+  grpc?: GrpcRequestDetails;
+  runtime?: GrpcRequestRuntime;
   docs?: string;
-  tags?: Tag[];
 }

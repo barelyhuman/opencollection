@@ -7,7 +7,7 @@ import type { Description } from '../common/description';
 import type { Scripts } from '../common/scripts';
 import type { Variable } from '../common/variables';
 import type { Tag } from '../common/tags';
-import type { HttpHeader } from './http';
+import type { HttpRequestHeader } from './http';
 
 export type WebSocketMessageType = 'text' | 'json' | 'xml' | 'binary';
 
@@ -24,17 +24,29 @@ export interface WebSocketMessageVariant {
 
 export type WebSocketPayload = WebSocketMessage | WebSocketMessageVariant[];
 
-export interface WebSocketRequest {
-  type: 'websocket';
+export interface WebSocketRequestInfo {
   name?: string;
   description?: Description;
+  type?: 'websocket';
   seq?: number;
-  url?: string;
-  headers?: HttpHeader[];
-  message?: WebSocketPayload;
-  auth?: Auth;
-  scripts?: Scripts;
-  variables?: Variable[];
-  docs?: string;
   tags?: Tag[];
+}
+
+export interface WebSocketRequestDetails {
+  url?: string;
+  headers?: HttpRequestHeader[];
+  message?: WebSocketPayload;
+}
+
+export interface WebSocketRequestRuntime {
+  variables?: Variable[];
+  scripts?: Scripts;
+  auth?: Auth;
+}
+
+export interface WebSocketRequest {
+  info?: WebSocketRequestInfo;
+  websocket?: WebSocketRequestDetails;
+  runtime?: WebSocketRequestRuntime;
+  docs?: string;
 }
