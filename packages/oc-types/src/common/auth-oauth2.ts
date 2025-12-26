@@ -58,7 +58,7 @@ export interface OAuth2ResourceOwner {
  * OAuth 2.0 PKCE Configuration
  */
 export interface OAuth2PKCE {
-  enabled?: boolean;
+  disabled?: boolean;
   method?: 'S256' | 'plain';
 }
 

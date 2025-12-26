@@ -173,9 +173,9 @@
       "type": "object",
       "description": "Proxy configuration for the collection",
       "properties": {
-        "enabled": {
+        "disabled": {
           "type": "boolean",
-          "description": "Is the proxy enabled"
+          "description": "Is the proxy disabled"
         },
         "inherit": {
           "type": "boolean",
@@ -204,38 +204,29 @@
           "description": "Proxy port"
         },
         "auth": {
-          "oneOf": [
-            {
+          "type": "object",
+          "description": "Proxy authentication",
+          "properties": {
+            "disabled": {
               "type": "boolean",
-              "const": false
+              "description": "Is proxy authentication disabled"
             },
-            {
-              "$ref": "#/$defs/ProxyAuth"
+            "username": {
+              "type": "string",
+              "description": "Proxy username"
+            },
+            "password": {
+              "type": "string",
+              "description": "Proxy password"
             }
-          ],
-          "description": "Proxy authentication"
+          },
+          "additionalProperties": false
         },
         "bypassProxy": {
           "type": "string",
           "description": "Bypass proxy string"
         }
       },
-      "additionalProperties": false
-    },
-    "ProxyAuth": {
-      "type": "object",
-      "description": "Proxy authentication credentials",
-      "properties": {
-        "username": {
-          "type": "string",
-          "description": "Proxy username"
-        },
-        "password": {
-          "type": "string",
-          "description": "Proxy password"
-        }
-      },
-      "required": ["username", "password"],
       "additionalProperties": false
     },
     "ClientCertificate": {
@@ -1109,9 +1100,9 @@
       "type": "object",
       "description": "PKCE (Proof Key for Code Exchange) configuration",
       "properties": {
-        "enabled": {
+        "disabled": {
           "type": "boolean",
-          "description": "Whether PKCE is enabled"
+          "description": "Whether PKCE is disabled"
         },
         "method": {
           "type": "string",
