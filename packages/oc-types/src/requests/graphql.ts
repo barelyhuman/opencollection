@@ -43,6 +43,7 @@ export interface GraphQLRequestDetails {
   headers?: HttpRequestHeader[];
   params?: HttpRequestParam[];
   body?: GraphQLBody | GraphQLBodyVariant[];
+  auth?: Auth;
 }
 
 export interface GraphQLRequestRuntime {
@@ -50,7 +51,6 @@ export interface GraphQLRequestRuntime {
   scripts?: Scripts;
   assertions?: Assertion[];
   actions?: Action[];
-  auth?: Auth;
 }
 
 export interface GraphQLRequest {

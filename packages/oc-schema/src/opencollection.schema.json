@@ -1779,6 +1779,9 @@
               }
             }
           ]
+        },
+        "auth": {
+          "$ref": "#/$defs/Auth"
         }
       },
       "additionalProperties": false
@@ -1810,9 +1813,6 @@
           "items": {
             "$ref": "#/$defs/Action"
           }
-        },
-        "auth": {
-          "$ref": "#/$defs/Auth"
         }
       },
       "additionalProperties": false
@@ -1914,6 +1914,9 @@
               }
             }
           ]
+        },
+        "auth": {
+          "$ref": "#/$defs/Auth"
         }
       },
       "additionalProperties": false
@@ -1945,9 +1948,6 @@
           "items": {
             "$ref": "#/$defs/Action"
           }
-        },
-        "auth": {
-          "$ref": "#/$defs/Auth"
         }
       },
       "additionalProperties": false
@@ -2044,6 +2044,9 @@
               }
             }
           ]
+        },
+        "auth": {
+          "$ref": "#/$defs/Auth"
         }
       },
       "additionalProperties": false
@@ -2068,9 +2071,6 @@
           "items": {
             "$ref": "#/$defs/Assertion"
           }
-        },
-        "auth": {
-          "$ref": "#/$defs/Auth"
         }
       },
       "additionalProperties": false
@@ -2151,6 +2151,9 @@
               }
             }
           ]
+        },
+        "auth": {
+          "$ref": "#/$defs/Auth"
         }
       },
       "additionalProperties": false
@@ -2168,9 +2171,27 @@
         },
         "scripts": {
           "$ref": "#/$defs/Scripts"
+        }
+      },
+      "additionalProperties": false
+    },
+    "WebSocketRequestSettings": {
+      "type": "object",
+      "description": "WebSocket request settings",
+      "properties": {
+        "timeout": {
+          "oneOf": [
+            { "type": "number" },
+            { "type": "string", "const": "inherit" }
+          ],
+          "description": "Connection timeout in milliseconds"
         },
-        "auth": {
-          "$ref": "#/$defs/Auth"
+        "keepAliveInterval": {
+          "oneOf": [
+            { "type": "number" },
+            { "type": "string", "const": "inherit" }
+          ],
+          "description": "Keep-alive interval in milliseconds"
         }
       },
       "additionalProperties": false
@@ -2187,6 +2208,9 @@
         },
         "runtime": {
           "$ref": "#/$defs/WebSocketRequestRuntime"
+        },
+        "settings": {
+          "$ref": "#/$defs/WebSocketRequestSettings"
         },
         "docs": {
           "type": "string",

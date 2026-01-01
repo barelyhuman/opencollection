@@ -24,6 +24,11 @@ export interface WebSocketMessageVariant {
 
 export type WebSocketPayload = WebSocketMessage | WebSocketMessageVariant[];
 
+export interface WebSocketRequestSettings {
+  timeout?: number | 'inherit';
+  keepAliveInterval?: number | 'inherit';
+}
+
 export interface WebSocketRequestInfo {
   name?: string;
   description?: Description;
@@ -36,17 +41,18 @@ export interface WebSocketRequestDetails {
   url?: string;
   headers?: HttpRequestHeader[];
   message?: WebSocketPayload;
+  auth?: Auth;
 }
 
 export interface WebSocketRequestRuntime {
   variables?: Variable[];
   scripts?: Scripts;
-  auth?: Auth;
 }
 
 export interface WebSocketRequest {
   info?: WebSocketRequestInfo;
   websocket?: WebSocketRequestDetails;
   runtime?: WebSocketRequestRuntime;
+  settings?: WebSocketRequestSettings;
   docs?: string;
 }

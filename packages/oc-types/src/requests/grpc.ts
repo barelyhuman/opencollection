@@ -52,13 +52,13 @@ export interface GrpcRequestDetails {
   protoFilePath?: string;
   metadata?: GrpcMetadata[];
   message?: GrpcMessagePayload;
+  auth?: Auth;
 }
 
 export interface GrpcRequestRuntime {
   variables?: Variable[];
   scripts?: Scripts;
   assertions?: Assertion[];
-  auth?: Auth;
 }
 
 export interface GrpcRequest {

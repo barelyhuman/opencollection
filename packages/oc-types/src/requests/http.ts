@@ -130,6 +130,7 @@ export interface HttpRequestDetails {
   headers?: HttpRequestHeader[];
   params?: HttpRequestParam[];
   body?: HttpRequestBody | HttpRequestBodyVariant[];
+  auth?: Auth;
 }
 
 export interface HttpRequestRuntime {
@@ -137,7 +138,6 @@ export interface HttpRequestRuntime {
   scripts?: Scripts;
   assertions?: Assertion[];
   actions?: Action[];
-  auth?: Auth;
 }
 
 export interface HttpRequest {
